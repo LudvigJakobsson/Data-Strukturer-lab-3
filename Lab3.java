@@ -18,7 +18,7 @@ public class Lab3 {
                 directory = new Scanner(System.in).nextLine();
             } else directory = args[0];
             Path[] paths = Files.list(Paths.get(directory)).toArray(Path[]::new);
-            //Arrays.sort(paths)
+            Arrays.sort(paths);
 
             // Stopwatches time how long each phase of the program
             // takes to execute.
@@ -34,7 +34,7 @@ public class Lab3 {
             stopwatch.finished("Building n-gram index");
 
             // Compute similarity of all file pairs
-            ScapegoatTree<PathPair, Integer> similarity = findSimilarity(files, index);
+            ScapegoatTree<PathPair, Integer> similarity = findSimilarity(index);
             stopwatch.finished("Computing similarity scores");
 
             // Find most similar file pairs, arranged in
@@ -83,33 +83,46 @@ public class Lab3 {
     static ScapegoatTree<Ngram, ArrayList<Path>> buildIndex(ScapegoatTree<Path, Ngram[]> files) {
         ScapegoatTree<Ngram, ArrayList<Path>> index = new ScapegoatTree<>();
         // TO DO: build index of n-grams
-        for (Path path : files.keys()) { //D
-            for (Ngram ngram : files.get(path)) { //K
+
+        //Search through all path key in files.
+        for (Path path : files.keys()) {
+            // Every specific Ngram in pathfile
+            for (Ngram ngram : files.get(path)) {
+                // If first occurance of Ngram, adds node with that specific Ngram
                 if (!index.contains(ngram)) {
                     index.put(ngram, new ArrayList<Path>());
                 }
+
+                //Puts file in specific Ngram nodes Arraylist
                 index.get(ngram).add(path);
             }
         }
+        //Returns that ScapeGoatTree
         return index;
     }
 
     // Phase 3: Count how many n-grams each pair of files has in common.
-    static ScapegoatTree<PathPair, Integer> findSimilarity(ScapegoatTree<Path, Ngram[]> files, ScapegoatTree<Ngram, ArrayList<Path>> index) {
+    static ScapegoatTree<PathPair, Integer> findSimilarity(ScapegoatTree<Ngram, ArrayList<Path>> index) {
         // TO DO: use index to make this loop much more efficient
         // N.B. Path is Java's class for representing filenames
         // PathPair represents a pair of Paths (see PathPair.java)
         ScapegoatTree<PathPair, Integer> similarity = new ScapegoatTree<>();
-        for (Ngram ngram : index.keys()) { //N
+        // Starts to check Ngram ScapeGoatTree
+        for (Ngram ngram : index.keys()) {
+            // loop through paths in ngram
             for (Path path1 : index.get(ngram)) {
+                //Compare that rest of path files in that ngram
                 for (Path path2 : index.get(ngram)) {
                     if (path1.equals(path2)) continue;
+                    //Create association between files
                     PathPair pair = new PathPair(path1, path2);
 
+                    // New pair counter if not added yet
                     if (!similarity.contains(pair)) {
-                        similarity.put(pair, 0); //logN
+                        similarity.put(pair, 0);
                     }
-                    similarity.put(pair, similarity.get(pair) + 1); //logN
+
+                    similarity.put(pair, similarity.get(pair) + 1);
                 }
             }
         }

@@ -26,7 +26,7 @@ O(n^2)
 **    Is the ratio between the times what you would expect, given the complexity?
 **    Explain very briefly why.
 *******************************************************************************/
-OBS medium tog 462 s small tog 2.5 s
+Medium took 462 s, small took 2.5 s
 
 200 000^2 / 20 000^2 = 100 expected
 
@@ -70,7 +70,7 @@ tree put all nodes on one side.
 **    that occur in more than one file.
 ******************************************************************************/
 
-O(N + NlogN) = O(NlogN)
+O(NlogN + NlogN) = O(NlogN)
 
 
 /******************************************************************************

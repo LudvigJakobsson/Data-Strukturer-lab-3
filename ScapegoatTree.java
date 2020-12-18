@@ -139,8 +139,11 @@ public class ScapegoatTree<Key extends Comparable<Key>, Value> {
             node.val   = val;
         }
         node.size = 1 + size(node.left) + size(node.right);
+
+        //Added node height for rebuild-check
         node.height = 1 + Math.max(height(node.left), height(node.right));
 
+        // Too much unbalance, conditioned on log2, rebuild size
         if (node.height > alpha * log2(node.size)){
             return rebuild(node);
         }
@@ -161,8 +164,7 @@ public class ScapegoatTree<Key extends Comparable<Key>, Value> {
     // Perform an inorder traversal of the subtree rooted at 'node', storing
     // its nodes into the ArrayList 'nodes'.
     private void inorder(Node node, ArrayList<Node> nodes) {
-        // TO DO: use in-order traversal to store 'node' and all
-        // descendants into 'nodes' ArrayList
+        // Base case: Reached the bottom
         if (node == null) {
             return;
         }
@@ -179,9 +181,12 @@ public class ScapegoatTree<Key extends Comparable<Key>, Value> {
         if (lo > hi) return null;
         // Midpoint of subarray.
         int mid = (lo+hi)/2;
+        //Sets new root for subtree
         Node root = nodes.get(mid);
+        //Recursive call on balancenode to firstly build left part
         root.left = balanceNodes(nodes, lo, mid-1);
         root.right = balanceNodes(nodes, mid+1, hi);
+
         root.height = 1 + Math.max(height(root.left), height(root.right));
         root.size = size(root.left) + size(root.right) + 1;
         return root;
